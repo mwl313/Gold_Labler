@@ -50,8 +50,13 @@ export function ExportPageClient({ adminEmails }: ExportPageClientProps) {
         const emailAllowed = user.email
           ? normalizedAdminEmails.has(user.email.toLowerCase())
           : false;
-        const role = await getUserRole(user.uid);
-        const roleAllowed = role === "admin";
+        let roleAllowed = false;
+        try {
+          const role = await getUserRole(user.uid);
+          roleAllowed = role === "admin";
+        } catch {
+          roleAllowed = false;
+        }
         if (!cancelled) {
           setAuthorized(emailAllowed || roleAllowed);
         }
