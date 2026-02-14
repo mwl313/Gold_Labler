@@ -266,7 +266,7 @@ export default function LabelPage() {
   }
 
   return (
-    <main className="relative mx-auto flex h-[100dvh] w-full max-w-[1600px] flex-col gap-3 overflow-hidden p-3 lg:gap-4 lg:p-4">
+    <main className="mx-auto flex h-[100dvh] w-full max-w-[1600px] flex-col gap-3 overflow-hidden p-3 lg:gap-4 lg:p-4">
       <TopBar
         index={index + 1}
         total={manifest.length}
@@ -328,11 +328,8 @@ export default function LabelPage() {
           onNext={() => setIndex((prev) => Math.min(manifest.length - 1, prev + 1))}
           prevDisabled={index === 0}
           nextDisabled={index === manifest.length - 1}
+          creditText="Made by Min.W.Lim"
         />
-      </div>
-
-      <div className="pointer-events-none absolute right-4 bottom-3 text-[11px] font-medium text-slate-500/90">
-        Made by Min.W.Lim
       </div>
     </main>
   );

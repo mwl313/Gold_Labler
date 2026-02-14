@@ -3,6 +3,7 @@ type NavButtonsProps = {
   onNext: () => void;
   prevDisabled: boolean;
   nextDisabled: boolean;
+  creditText?: string;
 };
 
 const baseButtonClass =
@@ -13,6 +14,7 @@ export function NavButtons({
   onNext,
   prevDisabled,
   nextDisabled,
+  creditText,
 }: NavButtonsProps) {
   return (
     <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
@@ -24,14 +26,19 @@ export function NavButtons({
       >
         뒤로
       </button>
-      <button
-        type="button"
-        onClick={onNext}
-        disabled={nextDisabled}
-        className={`${baseButtonClass} bg-slate-900 text-white hover:bg-slate-700`}
-      >
-        다음
-      </button>
+      <div className="flex items-center">
+        {creditText ? (
+          <span className="mr-3 px-2 text-xs font-medium text-slate-500">{creditText}</span>
+        ) : null}
+        <button
+          type="button"
+          onClick={onNext}
+          disabled={nextDisabled}
+          className={`${baseButtonClass} bg-slate-900 text-white hover:bg-slate-700`}
+        >
+          다음
+        </button>
+      </div>
     </div>
   );
 }
