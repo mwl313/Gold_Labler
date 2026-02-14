@@ -203,7 +203,7 @@ export default function LabelPage() {
 
   if (loading || manifestLoading) {
     return (
-      <main className="flex min-h-screen items-center justify-center text-sm text-slate-600">
+      <main className="flex h-[100dvh] items-center justify-center text-sm text-slate-600">
         로딩 중...
       </main>
     );
@@ -215,7 +215,7 @@ export default function LabelPage() {
 
   if (manifestError) {
     return (
-      <main className="flex min-h-screen items-center justify-center p-4">
+      <main className="flex h-[100dvh] items-center justify-center p-4">
         <div className="max-w-2xl rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
           {manifestError}
         </div>
@@ -225,21 +225,21 @@ export default function LabelPage() {
 
   if (!currentImage || !label) {
     return (
-      <main className="flex min-h-screen items-center justify-center text-sm text-slate-600">
+      <main className="flex h-[100dvh] items-center justify-center text-sm text-slate-600">
         Manifest 이미지가 비어 있습니다.
       </main>
     );
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-[1600px] flex-col gap-4 p-4">
+    <main className="mx-auto flex h-[100dvh] w-full max-w-[1600px] flex-col gap-3 overflow-hidden p-3 lg:gap-4 lg:p-4">
       <TopBar index={index + 1} total={manifest.length} currentImage={currentImage} />
 
-      <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_430px]">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 overflow-hidden md:grid-cols-[minmax(0,1fr)_minmax(320px,38vw)] lg:gap-4">
         <ImageViewer src={currentImage.path} alt={`DAP ${currentImage.id}`} />
 
-        <section className="flex min-h-0 flex-col gap-3">
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm">
+        <section className="flex min-h-0 flex-col gap-2 overflow-hidden lg:gap-3">
+          <div className="shrink-0 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm">
             <div className="font-semibold">
               저장 상태:{" "}
               {saveState === "saving"
@@ -256,7 +256,7 @@ export default function LabelPage() {
             <div className="text-slate-600">마지막 수정시간: {formatUpdatedAt(label.updatedAt)}</div>
           </div>
 
-          <div className="min-h-0 flex-1">
+          <div className="min-h-0 flex-1 overflow-hidden">
             <ItemChecklist
               itemDefs={items}
               values={label.items}
@@ -271,7 +271,7 @@ export default function LabelPage() {
         </section>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1fr)_430px]">
+      <div className="grid shrink-0 grid-cols-1 gap-3 md:grid-cols-[minmax(0,1fr)_minmax(320px,38vw)]">
         <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
           {user.displayName || user.email}
           <button

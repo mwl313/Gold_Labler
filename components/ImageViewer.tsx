@@ -57,7 +57,7 @@ export function ImageViewer({ src, alt }: ImageViewerProps) {
   };
 
   return (
-    <div className="flex h-full min-h-[420px] flex-col rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div className="flex h-full min-h-0 flex-col rounded-xl border border-slate-200 bg-white shadow-sm">
       <div className="flex items-center gap-2 border-b border-slate-200 px-3 py-2">
         <button
           type="button"
