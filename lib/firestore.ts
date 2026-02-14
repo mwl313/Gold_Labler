@@ -2,6 +2,7 @@ import {
   DocumentData,
   Timestamp,
   Unsubscribe,
+  collection,
   doc,
   getDoc,
   serverTimestamp,
@@ -233,4 +234,30 @@ export async function buildExportRows(images: ManifestImage[]): Promise<ExportRo
   });
 
   return Promise.all(labelPromises);
+}
+
+export function subscribeReviewedMap(
+  manifestIds: string[],
+  onChange: (reviewedById: Record<string, boolean>) => void,
+  onError?: (error: Error) => void,
+): Unsubscribe {
+  const db = getFirestoreDb();
+  const idSet = new Set(manifestIds);
+
+  return onSnapshot(
+    collection(db, "labels"),
+    (snapshot) => {
+      const reviewedById: Record<string, boolean> = {};
+
+      for (const docSnap of snapshot.docs) {
+        if (!idSet.has(docSnap.id)) {
+          continue;
+        }
+        reviewedById[docSnap.id] = docSnap.data().reviewed === true;
+      }
+
+      onChange(reviewedById);
+    },
+    (err) => onError?.(err),
+  );
 }

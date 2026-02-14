@@ -15,6 +15,7 @@ import {
   createDefaultLabel,
   getManifest,
   saveLabel,
+  subscribeReviewedMap,
   subscribeLabel,
 } from "@/lib/firestore";
 
@@ -36,6 +37,7 @@ export default function LabelPage() {
 
   const [index, setIndex] = useState(0);
   const [label, setLabel] = useState<LabelDocument | null>(null);
+  const [reviewedById, setReviewedById] = useState<Record<string, boolean>>({});
   const [saveState, setSaveState] = useState<SaveState>("idle");
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -84,6 +86,22 @@ export default function LabelPage() {
   const currentImage = manifest[index] ?? null;
 
   useEffect(() => {
+    if (!user || manifest.length === 0) {
+      setReviewedById({});
+      return;
+    }
+
+    const unsubscribe = subscribeReviewedMap(
+      manifest.map((image) => image.id),
+      setReviewedById,
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [manifest, user]);
+
+  useEffect(() => {
     if (!currentImage) {
       return;
     }
@@ -119,6 +137,22 @@ export default function LabelPage() {
     },
     [],
   );
+
+  useEffect(() => {
+    if (!currentImage || !label) {
+      return;
+    }
+
+    setReviewedById((prev) => {
+      if (prev[currentImage.id] === label.reviewed) {
+        return prev;
+      }
+      return {
+        ...prev,
+        [currentImage.id]: label.reviewed,
+      };
+    });
+  }, [currentImage, label]);
 
   const queueSave = useCallback(
     (nextLabel: LabelDocument) => {
@@ -232,8 +266,15 @@ export default function LabelPage() {
   }
 
   return (
-    <main className="mx-auto flex h-[100dvh] w-full max-w-[1600px] flex-col gap-3 overflow-hidden p-3 lg:gap-4 lg:p-4">
-      <TopBar index={index + 1} total={manifest.length} currentImage={currentImage} />
+    <main className="relative mx-auto flex h-[100dvh] w-full max-w-[1600px] flex-col gap-3 overflow-hidden p-3 lg:gap-4 lg:p-4">
+      <TopBar
+        index={index + 1}
+        total={manifest.length}
+        images={manifest}
+        reviewedById={reviewedById}
+        onSelectIndex={setIndex}
+        currentImage={currentImage}
+      />
 
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 overflow-hidden md:grid-cols-[minmax(0,1fr)_minmax(320px,38vw)] lg:gap-4">
         <ImageViewer src={currentImage.path} alt={`DAP ${currentImage.id}`} />
@@ -288,6 +329,10 @@ export default function LabelPage() {
           prevDisabled={index === 0}
           nextDisabled={index === manifest.length - 1}
         />
+      </div>
+
+      <div className="pointer-events-none absolute right-4 bottom-3 text-[11px] font-medium text-slate-500/90">
+        Made by Min.W.Lim
       </div>
     </main>
   );
