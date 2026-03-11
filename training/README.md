@@ -14,6 +14,7 @@
 ```bash
 pip install -r training/requirements.txt
 python training/train_qwen3vl_4b.py
+python training/eval_qwen3vl_4b.py
 ```
 
 ## 출력 경로
