@@ -228,7 +228,7 @@ def main() -> None:
         warmup_steps=warmup_steps,
         logging_steps=5,
         save_strategy="epoch",
-        evaluation_strategy="epoch",
+        eval_strategy="epoch",
         optim="adamw_8bit",
         weight_decay=0.01,
         lr_scheduler_type="cosine",
