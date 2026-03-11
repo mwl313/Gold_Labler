@@ -1,16 +1,18 @@
 import copy
 import json
-import os
 import sys
+import math
 from pathlib import Path
 from typing import Any
+
+# Keep unsloth imports before TRL/Transformers/PEFT to avoid compatibility warnings.
+from unsloth import FastVisionModel
+from unsloth.trainer import UnslothVisionDataCollator
 
 import torch
 from PIL import Image
 from datasets import Dataset
 from trl import SFTConfig, SFTTrainer
-from unsloth import FastVisionModel
-from unsloth.trainer import UnslothVisionDataCollator
 
 # Paths
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -170,6 +172,12 @@ def load_model():
     ) from last_error
 
 
+def estimate_total_steps(sample_count: int) -> int:
+    effective_batch = max(PER_DEVICE_BATCH * GRAD_ACC_STEPS, 1)
+    steps_per_epoch = max(math.ceil(sample_count / effective_batch), 1)
+    return steps_per_epoch * NUM_EPOCHS
+
+
 def main() -> None:
     log_env()
 
@@ -206,16 +214,21 @@ def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     use_bf16 = torch.cuda.is_available() and torch.cuda.is_bf16_supported()
+    total_steps = estimate_total_steps(len(train_ds))
+    warmup_steps = max(5, int(total_steps * 0.05))
+    print(f"Estimated total steps: {total_steps}")
+    print(f"Warmup steps: {warmup_steps}")
+
     args = SFTConfig(
         output_dir=str(OUTPUT_DIR),
         num_train_epochs=NUM_EPOCHS,
         per_device_train_batch_size=PER_DEVICE_BATCH,
         gradient_accumulation_steps=GRAD_ACC_STEPS,
         learning_rate=LEARNING_RATE,
-        warmup_ratio=0.05,
+        warmup_steps=warmup_steps,
         logging_steps=5,
         save_strategy="epoch",
-        eval_strategy="epoch",
+        evaluation_strategy="epoch",
         optim="adamw_8bit",
         weight_decay=0.01,
         lr_scheduler_type="cosine",
@@ -231,7 +244,7 @@ def main() -> None:
 
     trainer = SFTTrainer(
         model=model,
-        tokenizer=tokenizer,
+        processing_class=tokenizer,
         data_collator=UnslothVisionDataCollator(model, tokenizer),
         train_dataset=train_ds,
         eval_dataset=val_ds,
