@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "eslint",
     "build:manifest": "ts-node scripts/buildManifest.ts --seed=20260213",
-    "seed:manifest": "ts-node scripts/seedManifest.ts"
+    "seed:manifest": "ts-node scripts/seedManifest.ts",
+    "prepare:vlm-dataset": "ts-node scripts/prepareVlmDataset.ts",
+    "convert:qwen3vl": "ts-node scripts/convertGoldToQwen3VLM.ts",
+    "prepare:training-bundle": "ts-node scripts/prepareTrainingBundle.ts"
   },
   "dependencies": {
     "dotenv": "^17.3.1",

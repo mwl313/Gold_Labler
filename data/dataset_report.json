@@ -1,0 +1,72 @@
+{
+  "inputPath": "C:\\Users\\임민우\\Desktop\\인물화지능검사\\data\\gold_labels.jsonl",
+  "manifestPath": "C:\\Users\\임민우\\Desktop\\인물화지능검사\\Gold_Labeler\\data\\manifest.json",
+  "splitSource": "manifest",
+  "totalRecords": 200,
+  "splitCounts": {
+    "train": 140,
+    "val": 20,
+    "test": 40
+  },
+  "ageCounts": {
+    "4": 27,
+    "5": 26,
+    "6": 28,
+    "7": 28,
+    "8": 26,
+    "9": 25,
+    "10": 22,
+    "11": 18
+  },
+  "splitAgeCounts": {
+    "train": {
+      "4": 19,
+      "5": 18,
+      "6": 19,
+      "7": 19,
+      "8": 18,
+      "9": 18,
+      "10": 16,
+      "11": 13
+    },
+    "val": {
+      "4": 3,
+      "5": 3,
+      "6": 3,
+      "7": 3,
+      "8": 3,
+      "9": 2,
+      "10": 2,
+      "11": 1
+    },
+    "test": {
+      "4": 5,
+      "5": 5,
+      "6": 6,
+      "7": 6,
+      "8": 5,
+      "9": 5,
+      "10": 4,
+      "11": 4
+    }
+  },
+  "duplicateIds": [],
+  "manifestMissingInGold": [],
+  "goldMissingInManifest": [],
+  "missingRequiredFields": {
+    "id": 0,
+    "age": 0,
+    "items": 0
+  },
+  "splitFieldPresentCount": 200,
+  "itemsMissingKeyRecords": 0,
+  "itemsInvalidValueRecords": 0,
+  "invalidSplitRecords": 0,
+  "unassignedSplitRecords": 0,
+  "outputFiles": {
+    "withSplit": "C:\\Users\\임민우\\Desktop\\인물화지능검사\\Gold_Labeler\\data\\gold_labels_with_split.jsonl",
+    "train": "C:\\Users\\임민우\\Desktop\\인물화지능검사\\Gold_Labeler\\data\\train.jsonl",
+    "val": "C:\\Users\\임민우\\Desktop\\인물화지능검사\\Gold_Labeler\\data\\val.jsonl",
+    "test": "C:\\Users\\임민우\\Desktop\\인물화지능검사\\Gold_Labeler\\data\\test.jsonl"
+  }
+}
