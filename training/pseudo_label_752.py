@@ -62,7 +62,11 @@ def load_manifest() -> dict[str, Any]:
 def build_target_list(gold_ids: set[str], test_ids: set[str]) -> list[dict[str, Any]]:
     """images/{age}/{id}.jpg 전체에서 골드 200장을 제외한 대상 목록을 만든다."""
     targets: list[dict[str, Any]] = []
-    for p in sorted(IMAGES_ROOT.glob("*/*.jpg")):
+    # macOS tar/rsync이 주입하는 AppleDouble 메타데이터(._*.jpg)는 glob 단계에서 제외한다.
+    for p in sorted(IMAGES_ROOT.glob("*/[!._]*.jpg")):
+        # 방어 가드: 이름이 "._"로 시작하는 파일은 건너뛴다.
+        if p.name.startswith("._"):
+            continue
         sample_id = p.stem
         if sample_id in gold_ids:
             continue
