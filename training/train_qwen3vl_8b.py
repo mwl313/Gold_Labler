@@ -19,13 +19,13 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 TRAIN_JSONL = REPO_ROOT / "training_bundle" / "data" / "train_vlm.jsonl"
 VAL_JSONL = REPO_ROOT / "training_bundle" / "data" / "val_vlm.jsonl"
 TEST_JSONL = REPO_ROOT / "training_bundle" / "data" / "test_vlm.jsonl"
-OUTPUT_DIR = REPO_ROOT / "training" / "output" / "qwen3vl_4b_run1"
+OUTPUT_DIR = REPO_ROOT / "training" / "output" / "qwen3vl_8b_run1"
 
-# Qwen3-VL 4B candidate names (try in order)
+# Qwen3-VL 8B candidate names (try in order)
 MODEL_CANDIDATES = [
-    "unsloth/Qwen3-VL-4B-Instruct-unsloth-bnb-4bit",
-    "unsloth/Qwen3-VL-4B-Instruct-bnb-4bit",
-    "Qwen/Qwen3-VL-4B-Instruct",
+    "unsloth/Qwen3-VL-8B-Instruct-unsloth-bnb-4bit",
+    "unsloth/Qwen3-VL-8B-Instruct-bnb-4bit",
+    "Qwen/Qwen3-VL-8B-Instruct",
 ]
 
 # Conservative run-1 hyperparameters
@@ -169,7 +169,7 @@ def load_model():
             print(f"[Model] failed: {model_name} ({e})")
 
     raise RuntimeError(
-        "Qwen3-VL 4B 모델 로드에 실패했습니다. MODEL_CANDIDATES 또는 Hugging Face 접근 권한을 확인하세요."
+        "Qwen3-VL 8B 모델 로드에 실패했습니다. MODEL_CANDIDATES 또는 Hugging Face 접근 권한을 확인하세요."
     ) from last_error
 
 

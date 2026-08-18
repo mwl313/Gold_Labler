@@ -1,5 +1,6 @@
 import json
 import math
+import random
 import re
 from pathlib import Path
 from typing import Any
@@ -12,7 +13,7 @@ from peft import PeftModel
 from PIL import Image
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-CHECKPOINT_DIR = REPO_ROOT / "training" / "output" / "qwen3vl_4b_run1"
+CHECKPOINT_DIR = REPO_ROOT / "training" / "output" / "qwen3vl_8b_run1"
 TEST_JSONL = REPO_ROOT / "training_bundle" / "data" / "test_vlm.jsonl"
 REPORT_JSON = CHECKPOINT_DIR / "test_eval_report.json"
 REPORT_MD = CHECKPOINT_DIR / "test_eval_report.md"
@@ -307,6 +308,22 @@ def main() -> None:
     rmse_score = math.sqrt(sum(e * e for e in signed_score_errors) / max(len(signed_score_errors), 1))
     mean_bias = sum(signed_score_errors) / max(len(signed_score_errors), 1)
 
+    # ±3점 일치율 (B2 ③)
+    plus_minus_3_rate = sum(1 for e in abs_score_errors if e <= 3) / max(len(abs_score_errors), 1)
+
+    # 부트스트랩 95% CI for MAE (B2 ④) — Test 40장의 통계적 불확실성 표기
+    random.seed(42)
+    n_err = len(abs_score_errors)
+    if n_err > 0:
+        bootstrap_maes: list[float] = []
+        for _ in range(1000):
+            sample = [abs_score_errors[random.randrange(n_err)] for _ in range(n_err)]
+            bootstrap_maes.append(sum(sample) / n_err)
+        bootstrap_maes.sort()
+        mae_ci = {"low": bootstrap_maes[25], "high": bootstrap_maes[974]}
+    else:
+        mae_ci = {"low": 0.0, "high": 0.0}
+
     report = {
         "checkpoint_dir": str(CHECKPOINT_DIR),
         "test_file": str(TEST_JSONL),
@@ -325,8 +342,10 @@ def main() -> None:
         "total_score_error": {
             "valid_samples": len(abs_score_errors),
             "mae": mae_score,
+            "mae_95ci": mae_ci,
             "rmse": rmse_score,
             "mean_bias_pred_minus_gt": mean_bias,
+            "plus_minus_3_rate": plus_minus_3_rate,
         },
         "per_item_metrics": per_item_metrics,
         "sample_results": sample_errors,
@@ -355,9 +374,10 @@ def main() -> None:
         "",
         "## Total Score Error (Pred sum - Human sum)",
         f"- Valid samples (parse 성공): **{len(abs_score_errors)}**",
-        f"- MAE: **{mae_score:.4f}**",
+        f"- MAE: **{mae_score:.4f}** (95% CI {mae_ci['low']:.4f}~{mae_ci['high']:.4f})",
         f"- RMSE: **{rmse_score:.4f}**",
         f"- Mean Bias: **{mean_bias:.4f}**",
+        f"- ±3점 일치율: **{plus_minus_3_rate:.4f}**",
         "",
         "## Outputs",
         f"- JSON: `{REPORT_JSON}`",
