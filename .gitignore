@@ -44,3 +44,4 @@ secrets/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+training/output/
