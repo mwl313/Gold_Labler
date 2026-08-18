@@ -19,6 +19,13 @@ export function ImageViewer({ src, alt }: ImageViewerProps) {
   const [translate, setTranslate] = useState<Point>({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const [lastPoint, setLastPoint] = useState<Point | null>(null);
+  const [imageError, setImageError] = useState(false);
+  const [prevSrc, setPrevSrc] = useState(src);
+
+  if (prevSrc !== src) {
+    setPrevSrc(src);
+    setImageError(false);
+  }
 
   const imageStyle = useMemo(
     () => ({
@@ -98,9 +105,15 @@ export function ImageViewer({ src, alt }: ImageViewerProps) {
               fill
               unoptimized
               draggable={false}
+              onError={() => setImageError(true)}
               style={imageStyle}
               className="select-none object-contain transition-transform duration-75"
             />
+            {imageError ? (
+              <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-slate-100 text-slate-500">
+                <span className="text-sm">이미지를 불러올 수 없습니다</span>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
